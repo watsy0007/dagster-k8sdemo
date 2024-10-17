@@ -2,7 +2,7 @@ FROM python:3.11-slim AS builder
 
 RUN mkdir -p /opt/dagster/app
 RUN apt update && apt install -y git curl
-COPY ./requirements.txt /opt/dagster/app/requirements
+COPY ./requirements.txt /opt/dagster/app/requirements/
 
 RUN pip install -r /opt/dagster/app/requirements/requirements.txt
 
