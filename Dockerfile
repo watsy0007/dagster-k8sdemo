@@ -15,7 +15,7 @@ RUN mkdir -p /opt/dagster/app
 
 
 COPY example_project/example_repo/* /opt/dagster/app/
-COPY example_project/run_config /opt/dagster/
+COPY example_project/run_config /opt/dagster/run_config
 
 
 WORKDIR /opt/dagster/app
