@@ -1,7 +1,16 @@
 import os
 from collections import Counter
 
-from dagster import In, config_from_files, file_relative_path, graph, op, repository
+from dagster import (
+    In,
+    config_from_files,
+    file_relative_path,
+    graph,
+    op,
+    repository,
+    schedule,
+    RunRequest,
+)
 from dagster_aws.s3 import s3_pickle_io_manager, s3_resource
 from dagster_celery_k8s import celery_k8s_job_executor
 from dagster_k8s import k8s_job_executor
@@ -27,7 +36,9 @@ example_job = example_graph.to_job(
     description="Example job. Use this to test your deployment.",
     config=config_from_files(
         [
-            file_relative_path(__file__, os.path.join("..", "run_config", "pipeline.yaml")),
+            file_relative_path(
+                __file__, os.path.join("..", "run_config", "pipeline.yaml")
+            ),
         ]
     ),
 )
@@ -46,7 +57,9 @@ pod_per_op_job = example_graph.to_job(
     config=config_from_files(
         [
             file_relative_path(__file__, os.path.join("..", "run_config", "k8s.yaml")),
-            file_relative_path(__file__, os.path.join("..", "run_config", "pipeline.yaml")),
+            file_relative_path(
+                __file__, os.path.join("..", "run_config", "pipeline.yaml")
+            ),
         ]
     ),
 )
@@ -66,13 +79,22 @@ pod_per_op_celery_job = example_graph.to_job(
     executor_def=celery_k8s_job_executor,
     config=config_from_files(
         [
-            file_relative_path(__file__, os.path.join("..", "run_config", "celery_k8s.yaml")),
-            file_relative_path(__file__, os.path.join("..", "run_config", "pipeline.yaml")),
+            file_relative_path(
+                __file__, os.path.join("..", "run_config", "celery_k8s.yaml")
+            ),
+            file_relative_path(
+                __file__, os.path.join("..", "run_config", "pipeline.yaml")
+            ),
         ]
     ),
 )
 
 
+@schedule(job=example_job, cron_schedule="5 * * * *")
+def example_job_schedule(_context):
+    return RunRequest(run_key=None)
+
+
 @repository
 def example_repo():
-    return [example_job, pod_per_op_job, pod_per_op_celery_job]
+    return [example_job, pod_per_op_job, pod_per_op_celery_job, example_job_schedule]
