@@ -1,5 +1,7 @@
-dagster==1.8.11
-dagster-k8s==0.24.11
-dagster-celery-k8s==0.24.11
-dagster-aws==0.24.11
-dagster-postgres==0.24.11
+dagster==1.8.12
+dagster-k8s==0.24.12
+dagster-celery-k8s==0.24.12
+dagster-aws==0.24.12
+dagster-postgres==0.24.12
+dagster-celery==0.24.12
+celery[redis]==5.4.0
